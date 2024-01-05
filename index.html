@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-<title>Your online hosting service</title>
+<title>Nền tảng lưu trữ trực tuyến của bTeam</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -45,18 +45,22 @@ body, html {
 <!-- Sidebar on small screens when clicking the menu icon -->
 <nav class="w3-sidebar w3-bar-block w3-black w3-card w3-animate-left w3-hide-medium w3-hide-large" style="display:none" id="mySidebar">
   <a href="javascript:void(0)" onclick="w3_close()" class="w3-bar-item w3-button w3-large w3-padding-16">Close ×</a>
-<span class="w3-large">Share photos quickly and safely, delete photos automatically after a period of time.</span>
-    <span class="w3-large">Free, secure, no login required. It's open-source!</span>
+<span class="w3-large">Chia sẻ ảnh nhanh gọn và an toàn, tự xóa ảnh sau một khoảng thời gian.</span>
+    <span class="w3-large">Miễn phí, an toàn, không cần đăng nhập.</span>
+    
+    <br><br><span class="w3-large">bShare là một dịch vụ upload ảnh miễn phí và thuận tiện cho việc chia sẻ hình ảnh. Khách hàng có thể upload ảnh lên bShare với khả năng tự xoá, không giới hạn dung lượng và không giảm chất lượng ảnh. Đặc biệt, bShare cung cấp khả năng chỉnh sửa và tùy chỉnh kích thước ảnh trước khi chia sẻ. Khách hàng cũng có thể tạo album riêng để lưu trữ hình ảnh yêu thích. Với bShare, việc chia sẻ hình ảnh chưa bao giờ dễ dàng hơn thế.</span>
 </nav>
 
 <!-- Header with full-height image -->
 <header class="bgimg-1 w3-display-container w3-grayscale-min" id="home">
   <div class="w3-display-left w3-text-white" style="padding:38px">
-    <span class="w3-jumbo w3-hide-small">Online hosting service</span><br>
-    <span class="w3-xxlarge w3-hide-large w3-hide-medium">Online hosting service</span><br>
-    <span class="w3-large">Share photos quickly and safely, delete photos automatically after a period of time.</span>
-    <span class="w3-large">Free, secure, no login required. It's open-source!</span>
-        
+    <span class="w3-jumbo w3-hide-small">Nền tảng lưu trữ trực tuyến</span><br>
+    <span class="w3-xxlarge w3-hide-large w3-hide-medium">   </span><br>
+    <span class="w3-large">Chia sẻ ảnh nhanh gọn và an toàn, tự xóa ảnh sau một khoảng thời gian.</span>
+    <span class="w3-large">Miễn phí, an toàn, không cần đăng nhập.</span>
+    
+    <br><br><span class="w3-large">bShare là một dịch vụ upload ảnh miễn phí và thuận tiện cho việc chia sẻ hình ảnh. Khách hàng có thể upload ảnh lên bShare với khả năng tự xoá, không giới hạn dung lượng và không giảm chất lượng ảnh. Đặc biệt, bShare cung cấp khả năng chỉnh sửa và tùy chỉnh kích thước ảnh trước khi chia sẻ. Khách hàng cũng có thể tạo album riêng để lưu trữ hình ảnh yêu thích. Với bShare, việc chia sẻ hình ảnh chưa bao giờ dễ dàng hơn thế.</span>
+    
   </div> 
   <div class="w3-display-bottomleft w3-text-grey w3-large" style="padding:24px 48px">
   <br>
@@ -67,17 +71,15 @@ body, html {
 </header>
 
 <!--Upload Sections-->
-<center>
-<h2>Uploading is just beginning...</h2>
+
+  <h2>Tải lên chỉ là bước khởi đầu...</h2>
   <form action="/upload.php" method="post" enctype="multipart/form-data">
-  Choose files to upload:
-  <input type="file" name="fileupload" id="fileupload">
-  <button id="myBtn" onclick="move()" type="submit" value="Tải lên ngay" name="submit">Upload now</button>
-</form>
-</center>
-
-<br>
-
+  Chọn file để upload:
+  <input type="file" name="fileupload[]" id="fileupload" multiple="multiple">
+  <button id="myBtn" onclick="move()" type="submit" value="Tải lên ngay" name="submit">Tải lên ngay</button>
+</form><br><br><br>
+<b>Lưu ý: Hiện tại chỉ hỗ trợ các loại file dưới 8MB</b>
+<p>🔴 Mới: Hiện tại đã hỗ trợ MP4 (dưới 8MB)</p>
 
 
 
@@ -130,12 +132,11 @@ body {font-family: Arial, Helvetica, sans-serif;}
 
   <!-- Modal content -->
   <div class="modal-content">
-
-    <!-- <span class="close">&times;</span> -->
-    <h2>Upload in progress</h2><br /><br />
-    
-    <img src="https://ftbl0cloud.000webhostapp.com/img/spinner_color.gif" alt="" />
-    <p>Uploading, please wait...</p>
+    <!-- Close button <span class="close">&times;</span> -->
+    <center>
+    <img src="https://ftbl0cloud.000webhostapp.com/img/spinner_color.gif" alt="" width="25px" />
+    <p>Đang tải lên, vui lòng đợi...</p>
+    </center>
   </div>
 
 </div>
@@ -161,23 +162,37 @@ span.onclick = function() {
 }
 
 // When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
+// window.onclick = function(event) {
+//  if (event.target == modal) {
+//    modal.style.display = "none";
+//  }
+// }
 </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 
 <!-- Footer -->
 <footer class="w3-center w3-black w3-padding-64">
-  <a href="#home" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>Go to Top</a>
+  <a href="#home" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>Lên đầu trang</a>
   <div class="w3-xlarge w3-section">
 
   </div>
-  <p>Our source-code available at GitHub <b>dapps-sc/bShare-Online-Hosting</b> and it's free to use under MIT license! Version 1.0.1</p>
+  <p>Lập trình và vận hành bởi bTeam. Nền tảng đối tác lưu trữ là 000webhost</p>
 </footer>
  
 <script>
