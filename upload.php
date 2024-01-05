@@ -1,106 +1,100 @@
 <?php
 
-// FILE upload.php PROCESSING FILES
-
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    // Check if the request method is POST.
-    echo "The request method is not POST.";
-    die;
-}
-
-// Check if the file upload field is empty.
-if (!isset($_FILES["fileupload"])) {
-    echo "The file upload field is empty.";
-    die;
-}
-
-// Check if there was an error uploading the file.
-if ($_FILES["fileupload"]['error'] != 0) {
-    echo "An error occurred. There was an error uploading the file, error code: $error_code.";
-    die;
-}
-
-// First check successfully, then continue these steps
-
-// Folder
-$target_dir = "uploads-cdn/";
-
-// Temporary file (data will be saved in uploads with its own name)
-$originalFileName = $_FILES["fileupload"]["name"];
-$extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
-$randomName = generateRandomName($originalFileName);
-$target_file = $target_dir . $randomName;
-
-$allowUpload = true;
-
-// Get the file upload extension information.
-$imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
-
-// Max upload file size
-$maxfilesize = 8900000;
-
-// Check if the file type is allowed.
-$allowtypes = array('jpg', 'png', 'jpeg', 'gif');
-
-if (isset($_POST["submit"])) {
-    // Check if the file type is allowed. Is it an image?
-    $check = getimagesize($_FILES["fileupload"]["tmp_name"]);
-    if ($check !== false) {
-        echo "Image file(s) - " . $check["mime"] . ".";
-        $allowUpload = true;
-    } else {
-        echo "Not an image file(s).";
-        $allowUpload = false;
-    }
-}
-
-// Check if the file already exists and do not allow overwriting.
-if (file_exists($target_file)) {
-    echo "The file name already exists on the server, please rename your file and try again.";
-    $allowUpload = false;
-}
-
-// Check if the upload file size exceeds the allowed limit
-if ($_FILES["fileupload"]["size"] > $maxfilesize) {
-    echo "You cannot upload images larger than $maxfilesize (bytes).";
-    $allowUpload = false;
-}
-
-// Check file type
-if (!in_array($imageFileType, $allowtypes)) {
-    echo "Only JPG, PNG, JPEG, GIF formats are allowed.";
-    $allowUpload = false;
-}
-
-if ($allowUpload) {
-    // Move the temporary file to the storage directory using the move_uploaded_file function
-    if (move_uploaded_file($_FILES["fileupload"]["tmp_name"], $target_file)) {
-        echo "File " . basename($_FILES["fileupload"]["name"]) .
-            " has been successfully uploaded.";
-
-        echo "File saved in your directory: Your pre-directory" . $target_file;
-    } else {
-        echo "There was an error uploading the file.";
-    }
-} else {
-    echo "File upload failed, it may be due to a large file, incorrect file type, etc.";
-}
-
-// Function to generate a random name for the file with extension
-function generateRandomName($originalFileName)
-{
-    $characters = '0123456789';
-    $randomName = '';
-
-    for ($i = 0; $i < 20; $i++) {
-        $randomName .= $characters[rand(0, strlen($characters) - 1)];
+// Function to generate a random file name
+function generate_random_filename() {
+    // Create an array of 5 random numbers
+    $numbers = array();
+    for ($i = 0; $i < 5; $i++) {
+        $numbers[] = rand(0, 9);
     }
 
-    $extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
+    // Create an array of 3 random lowercase letters
+    $letters = array();
+    for ($i = 0; $i < 3; $i++) {
+        $letters[] = chr(rand(97, 122));
+    }
 
-    $randomNameWithExtension = pathinfo($originalFileName, PATHINFO_FILENAME) . '_' . $randomName . '.' . $extension;
+    // Create a random file name
+    $filename = implode('', $numbers) . implode('', $letters) . date('mdY');
 
-    return $randomNameWithExtension;
+    return $filename;
 }
+
+// Function to check if a file already exists
+function file_exists_with_random_filename($filename) {
+    // Create an array of 5 random numbers
+    $numbers = array();
+    for ($i = 0; $i < 5; $i++) {
+        $numbers[] = rand(0, 9);
+    }
+
+    // Create an array of 3 random lowercase letters
+    $letters = array();
+    for ($i = 0; $i < 3; $i++) {
+        $letters[] = chr(rand(97, 122));
+    }
+
+    // Create a random file name
+    $new_filename = implode('', $numbers) . implode('', $letters) . date('mdY');
+
+    // Check if the file name already exists on the server
+    return file_exists($filename . $new_filename);
+}
+
+// Start processing file uploads
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['fileupload'])) {
+
+    // List of allowed file types for upload
+    $allowed_types = array('image/jpeg', 'image/png', 'image/gif', 'video/mp4');
+
+    // Get file information
+    $files = $_FILES['fileupload'];
+
+    $names      = $files['name'];
+    $types      = $files['type'];
+    $tmp_names  = $files['tmp_name'];
+    $errors     = $files['error'];
+    $sizes      = $files['size'];
+
+    // Number of files to be uploaded
+    $numitems = count($names);
+    $numfiles = 0;
+
+    // Process each file
+    for ($i = 0; $i < $numitems; $i++) {
+        // Check if the $i-th file in the file array was uploaded successfully and is of the correct format
+        if ($errors[$i] == 0 && in_array($types[$i], $allowed_types)) {
+            $numfiles++;
+
+            // Generate a random file name
+            $new_filename = "";
+            do {
+                $new_filename = generate_random_filename() . $names[$i];
+            } while (file_exists_with_random_filename($new_filename));
+
+            // Move the file to the server
+            move_uploaded_file($tmp_names[$i], 'uploads-cdn/' . $new_filename);
+
+            // Display file information
+            echo "You uploaded file number $numfiles:<br>";
+            echo "File name: $names[$i] <br>";
+            echo "Saved at: 𝐘𝐨𝐮𝐫 𝐩𝐫𝐞-𝐝𝐢𝐫𝐞𝐜𝐭𝐨𝐫𝐲/$new_filename <br>";
+            echo "File size: $sizes[$i] <br><hr>";
+        } else {
+            echo "Upload failed: $names[$i] is not a valid image or video file<br>";
+        }
+    }
+
+    // Display the total number of successfully uploaded files
+    echo "Total number of uploaded files: " . $numfiles;
+}
+
 ?>
 
+<form method="post" enctype="multipart/form-data">
+    <p>Select files to upload:
+      (The maximum size allowed by PHP is <?= ini_get('upload_max_filesize') ?>)</p>
+
+    <input name="fileupload[]" type="file" multiple="multiple" />
+    <input type="submit" value="Upload Images" name="submit">
+</form>
