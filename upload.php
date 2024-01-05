@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 // Check if the file upload field is empty.
-// If data empty then stop
 if (!isset($_FILES["fileupload"])) {
     echo "The file upload field is empty.";
     die;
@@ -25,10 +24,12 @@ if ($_FILES["fileupload"]['error'] != 0) {
 
 // Folder
 $target_dir = "uploads-cdn/";
+
 // Temporary file (data will be saved in uploads with its own name)
-$extension = pathinfo($_FILES["fileupload"]["name"], PATHINFO_EXTENSION);
-$randomName = generateRandomName();
-$target_file = $target_dir . $randomName . '.' . $extension;
+$originalFileName = $_FILES["fileupload"]["name"];
+$extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
+$randomName = generateRandomName($originalFileName);
+$target_file = $target_dir . $randomName;
 
 $allowUpload = true;
 
@@ -38,7 +39,7 @@ $imageFileType = pathinfo($target_file, PATHINFO_EXTENSION);
 // Max upload file size
 $maxfilesize = 8900000;
 
-//// Check if the file type is allowed.
+// Check if the file type is allowed.
 $allowtypes = array('jpg', 'png', 'jpeg', 'gif');
 
 if (isset($_POST["submit"])) {
@@ -54,7 +55,6 @@ if (isset($_POST["submit"])) {
 }
 
 // Check if the file already exists and do not allow overwriting.
-// You can develop the code to save it as a different filename
 if (file_exists($target_file)) {
     echo "The file name already exists on the server, please rename your file and try again.";
     $allowUpload = false;
@@ -78,7 +78,7 @@ if ($allowUpload) {
         echo "File " . basename($_FILES["fileupload"]["name"]) .
             " has been successfully uploaded.";
 
-        echo "File saved in your directory: 𝐘𝐨𝐮𝐫 𝐩𝐫𝐞-𝐝𝐢𝐫𝐞𝐜𝐭𝐨𝐫𝐲" . $target_file;
+        echo "File saved in your directory: Your pre-directory" . $target_file;
     } else {
         echo "There was an error uploading the file.";
     }
@@ -86,8 +86,8 @@ if ($allowUpload) {
     echo "File upload failed, it may be due to a large file, incorrect file type, etc.";
 }
 
-// Function to generate a random name for the file
-function generateRandomName()
+// Function to generate a random name for the file with extension
+function generateRandomName($originalFileName)
 {
     $characters = '0123456789';
     $randomName = '';
@@ -96,6 +96,11 @@ function generateRandomName()
         $randomName .= $characters[rand(0, strlen($characters) - 1)];
     }
 
-    return $randomName;
+    $extension = pathinfo($originalFileName, PATHINFO_EXTENSION);
+
+    $randomNameWithExtension = pathinfo($originalFileName, PATHINFO_FILENAME) . '_' . $randomName . '.' . $extension;
+
+    return $randomNameWithExtension;
 }
 ?>
+
